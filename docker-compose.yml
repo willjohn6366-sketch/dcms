@@ -27,3 +27,14 @@ services:
       - backend
     ports:
       - "6102:80"
+
+  mobile-h5:
+    build:
+      context: .
+      dockerfile: mobile-uni/Dockerfile
+    container_name: circuit-management-mobile-h5
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "6101:80"

@@ -6,7 +6,7 @@
 
 - `backend/`：Express + Sequelize 后端服务，默认端口 `6100`。
 - `pc-web/`：PC 管理端，Vue + Element Plus，默认端口 `6102`。
-- `mobile-uni/`：移动端 H5/uni-app 工程，默认端口规划为 `6101`。
+- `mobile-uni/`：移动端 H5/uni-app 工程，默认端口 `6101`。
 - `miniprogram/`：小程序端工程。
 - `backend/data/`：运行时数据目录，不提交到 Git。内部按 `database/` 和 `backups/` 分开保存。
 - `version.json`：版本号和更新说明，关于页面和检查更新功能会读取这里的版本信息。
@@ -47,6 +47,7 @@ docker compose up -d --build
 默认端口：
 
 - 后端 API：`6100`
+- H5 移动端：`6101`
 - PC 页面：`6102`
 
 数据持久化：

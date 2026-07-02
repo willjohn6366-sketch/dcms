@@ -1,0 +1,49 @@
+<view class="topology-canvas-container">
+  <canvas
+    type="2d"
+    id="topologyCanvas"
+    class="topology-canvas"
+    bindtouchstart="handleTouchStart"
+    bindtouchmove="handleTouchMove"
+    bindtouchend="handleTouchEnd"
+    bindtap="handleTap"
+  ></canvas>
+
+  <!-- 设备详情弹窗 -->
+  <van-popup show="{{showDevicePopup}}" position="bottom" bind:close="closePopup">
+    <view class="popup-content">
+      <view class="popup-title">设备详情</view>
+      <view class="popup-item">
+        <text class="label">设备名称：</text>
+        <text>{{selectedDevice.device_name}}</text>
+      </view>
+      <view class="popup-item">
+        <text class="label">设备类型：</text>
+        <text>{{selectedDevice.device_type}}</text>
+      </view>
+      <view class="popup-item">
+        <text class="label">设备型号：</text>
+        <text>{{selectedDevice.device_model}}</text>
+      </view>
+      <view class="popup-item">
+        <text class="label">位置：</text>
+        <text>{{selectedDevice.location}}</text>
+      </view>
+    </view>
+  </van-popup>
+
+  <!-- 连接详情弹窗 -->
+  <van-popup show="{{showConnectionPopup}}" position="bottom" bind:close="closePopup">
+    <view class="popup-content">
+      <view class="popup-title">连接详情</view>
+      <view class="popup-item">
+        <text class="label">连接类型：</text>
+        <text>{{selectedConnection.connection_type}}</text>
+      </view>
+      <view class="popup-item">
+        <text class="label">光纤信息：</text>
+        <text>{{selectedConnection.fiber_info}}</text>
+      </view>
+    </view>
+  </van-popup>
+</view>

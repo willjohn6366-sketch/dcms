@@ -1,0 +1,22 @@
+.container {
+  padding-bottom: 120rpx;
+  background-color: #f7f8fa;
+  min-height: 100vh;
+}
+
+.empty-tip {
+  text-align: center;
+  color: #969799;
+  padding: 100rpx 0;
+  font-size: 28rpx;
+}
+
+.footer-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}

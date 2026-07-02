@@ -1,0 +1,27 @@
+<view class="container">
+  <van-search
+    value="{{ searchKeyword }}"
+    placeholder="搜索单位名称"
+    bind:change="onSearchChange"
+    bind:search="onSearch"
+  />
+
+  <van-cell-group title="客户单位">
+    <van-cell
+      wx:for="{{ customers }}"
+      wx:key="id"
+      title="{{ item.name }}"
+      label="{{ item.contact_person }} | {{ item.contact_phone }}"
+      is-link
+      url="/pages/customer/detail/index?id={{ item.id }}"
+    />
+  </van-cell-group>
+
+  <view class="empty-tip" wx:if="{{ customers.length === 0 }}">
+    暂无客户数据
+  </view>
+
+  <view class="footer-btn">
+    <van-button type="info" block round bind:click="onAddCustomer">新增客户</van-button>
+  </view>
+</view>

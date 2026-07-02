@@ -1,0 +1,32 @@
+<view class="container">
+  <van-search
+    value="{{ searchKeyword }}"
+    placeholder="搜索电路编号/IP/名称"
+    bind:change="onSearchChange"
+    bind:search="onSearch"
+  />
+
+  <van-cell-group title="电路列表">
+    <van-cell
+      wx:for="{{ circuits }}"
+      wx:key="id"
+      title="{{ item.circuit_name }}"
+      value="{{ item.circuit_type }}"
+      label="{{ item.circuit_number }} | {{ item.bandwidth }}"
+      is-link
+      url="/pages/circuit/detail/index?id={{ item.id }}"
+    >
+      <view slot="right-icon">
+        <van-tag type="primary" plain>{{ item.circuit_type }}</van-tag>
+      </view>
+    </van-cell>
+  </van-cell-group>
+
+  <view class="empty-tip" wx:if="{{ circuits.length === 0 }}">
+    暂无匹配电路数据
+  </view>
+
+  <view class="footer-btn">
+    <van-button type="info" block round bind:click="onAddCircuit">新增电路</van-button>
+  </view>
+</view>

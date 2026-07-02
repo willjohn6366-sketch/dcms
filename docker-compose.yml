@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: circuit-management-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 6100
+      DB_DIALECT: sqlite
+      DB_STORAGE: /app/data/database/circuit_management.sqlite
+      BACKUP_DIR: /app/data/backups
+    volumes:
+      - ./backend/data:/app/data
+    ports:
+      - "6100:6100"
+
+  pc-web:
+    build:
+      context: .
+      dockerfile: pc-web/Dockerfile
+    container_name: circuit-management-pc-web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "6102:80"

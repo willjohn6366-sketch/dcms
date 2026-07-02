@@ -1,0 +1,48 @@
+<view class="container">
+  <view class="header">
+    <text class="title">电路与拓扑管理系统</text>
+    <text class="subtitle">2026 智慧维护版</text>
+  </view>
+
+  <view class="search-section">
+    <van-search
+      value="{{ searchKeyword }}"
+      placeholder="输入电路编号或 IP 搜索"
+      bind:search="onQuickSearch"
+    />
+  </view>
+
+  <view class="grid-section">
+    <van-grid column-num="2" gutter="{{ 10 }}" clickable>
+      <van-grid-item
+        icon="friends-o"
+        text="客户管理"
+        url="/pages/customer/list/index"
+      />
+      <van-grid-item
+        icon="records"
+        text="电路管理"
+        url="/pages/circuit/list/index"
+      />
+      <van-grid-item
+        icon="add-o"
+        text="新增客户"
+        url="/pages/customer/form/index"
+      />
+      <van-grid-item
+        icon="plus"
+        text="录入电路"
+        url="/pages/circuit/form/index"
+      />
+    </van-grid>
+  </view>
+
+  <view class="status-card {{isConnected ? 'success' : 'error'}}">
+    <text class="status-text">{{status}}</text>
+    <van-button type="default" size="small" plain round bind:click="checkHealth">刷新状态</van-button>
+  </view>
+
+  <view class="footer">
+    <text>阶段五: 小程序功能页面开发中</text>
+  </view>
+</view>

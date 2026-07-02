@@ -1,0 +1,39 @@
+<view class="circuit-detail-container">
+  <!-- 电路基本信息 -->
+  <van-cell-group title="电路基本信息">
+    <van-cell title="电路名称" value="{{circuit.circuit_name}}" />
+    <van-cell title="电路编号" value="{{circuit.circuit_number}}" />
+    <van-cell title="电路类型" value="{{circuit.circuit_type}}" />
+    <van-cell title="带宽" value="{{circuit.bandwidth}}" />
+    <van-cell title="开通日期" value="{{circuit.open_date}}" />
+  </van-cell-group>
+
+  <!-- IP 地址信息 -->
+  <van-cell-group title="IP 地址信息" wx:if="{{circuit.local_ip || circuit.remote_ip}}">
+    <van-cell title="本端 IP" value="{{circuit.local_ip || '-'}}" wx:if="{{circuit.local_ip}}" />
+    <van-cell title="对端 IP" value="{{circuit.remote_ip || '-'}}" wx:if="{{circuit.remote_ip}}" />
+  </van-cell-group>
+
+  <!-- 拓扑图展示 -->
+  <view class="topology-section" wx:if="{{circuit.topology_id}}">
+    <view class="section-title">组网拓扑图</view>
+    <view class="topology-wrapper">
+      <topology-canvas
+        topologyId="{{circuit.topology_id}}"
+        highlightConnectionId="{{circuit.connection_id}}"
+        editable="{{false}}"
+      ></topology-canvas>
+    </view>
+    <view class="topology-hint">红色高亮线路为该电路绑定的物理链路</view>
+  </view>
+
+  <!-- 链路详情 -->
+  <van-cell-group title="绑定链路详情" wx:if="{{connectionDetail}}">
+    <van-cell title="源设备" value="{{connectionDetail.sourceDevice}}" />
+    <van-cell title="源端口" value="{{connectionDetail.sourcePort}}" />
+    <van-cell title="目标设备" value="{{connectionDetail.targetDevice}}" />
+    <van-cell title="目标端口" value="{{connectionDetail.targetPort}}" />
+    <van-cell title="连接类型" value="{{connectionDetail.connection_type === 'fiber' ? '光纤' : '网线'}}" />
+    <van-cell title="光纤信息" value="{{connectionDetail.fiber_info || '-'}}" wx:if="{{connectionDetail.fiber_info}}" />
+  </van-cell-group>
+</view>

@@ -1,0 +1,125 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "资料台账",
+        "navigationStyle": "custom",
+        "backgroundColor": "#f5f7fb",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/customer/list/index",
+      "style": {
+        "navigationBarTitleText": "客户管理",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/customer/detail/index",
+      "style": {
+        "navigationBarTitleText": "客户详情"
+      }
+    },
+    {
+      "path": "pages/customer/form/index",
+      "style": {
+        "navigationBarTitleText": "新增客户"
+      }
+    },
+    {
+      "path": "pages/circuit/list/index",
+      "style": {
+        "navigationBarTitleText": "电路管理",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/circuit/detail/index",
+      "style": {
+        "navigationBarTitleText": "电路详情"
+      }
+    },
+    {
+      "path": "pages/circuit/form/index",
+      "style": {
+        "navigationBarTitleText": "新增电路"
+      }
+    },
+    {
+      "path": "pages/topology/list/index",
+      "style": {
+        "navigationBarTitleText": "组网拓扑"
+      }
+    },
+    {
+      "path": "pages/topology/all/index",
+      "style": {
+        "navigationBarTitleText": "组网拓扑"
+      }
+    },
+    {
+      "path": "pages/topology/form/index",
+      "style": {
+        "navigationBarTitleText": "新增拓扑"
+      }
+    },
+    {
+      "path": "pages/topology/detail/index",
+      "style": {
+        "navigationBarTitleText": "拓扑详情"
+      }
+    },
+    {
+      "path": "pages/device/form/index",
+      "style": {
+        "navigationBarTitleText": "新增设备"
+      }
+    },
+    {
+      "path": "pages/device/ports/index",
+      "style": {
+        "navigationBarTitleText": "端口管理"
+      }
+    },
+    {
+      "path": "pages/connection/form/index",
+      "style": {
+        "navigationBarTitleText": "新增连接"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "电路台账",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f5f7fb"
+  },
+  "tabBar": {
+    "color": "#8A94A6",
+    "selectedColor": "#2563EB",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "工作台",
+        "iconPath": "static/tabbar/home.svg",
+        "selectedIconPath": "static/tabbar/home-active.svg"
+      },
+      {
+        "pagePath": "pages/customer/list/index",
+        "text": "客户",
+        "iconPath": "static/tabbar/customer.svg",
+        "selectedIconPath": "static/tabbar/customer-active.svg"
+      },
+      {
+        "pagePath": "pages/circuit/list/index",
+        "text": "电路",
+        "iconPath": "static/tabbar/circuit.svg",
+        "selectedIconPath": "static/tabbar/circuit-active.svg"
+      }
+    ]
+  }
+}

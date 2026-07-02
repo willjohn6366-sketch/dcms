@@ -1,0 +1,15 @@
+.container {
+  padding: 20rpx 0 120rpx;
+  background-color: #f7f8fa;
+  min-height: 100vh;
+}
+
+.footer-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  z-index: 99;
+}

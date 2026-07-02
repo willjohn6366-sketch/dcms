@@ -1,0 +1,31 @@
+<view class="container">
+  <van-cell-group title="基本信息">
+    <van-field
+      value="{{ name }}"
+      label="单位名称"
+      placeholder="请输入单位名称"
+      required
+      bind:change="onFieldChange"
+      data-name="name"
+    />
+    <van-field
+      value="{{ contact_person }}"
+      label="联系人"
+      placeholder="请输入联系人姓名"
+      bind:change="onFieldChange"
+      data-name="contact_person"
+    />
+    <van-field
+      value="{{ contact_phone }}"
+      label="联系电话"
+      placeholder="请输入联系电话"
+      type="number"
+      bind:change="onFieldChange"
+      data-name="contact_phone"
+    />
+  </van-cell-group>
+
+  <view class="footer-btn">
+    <van-button type="info" block round bind:click="onSubmit">提交保存</van-button>
+  </view>
+</view>

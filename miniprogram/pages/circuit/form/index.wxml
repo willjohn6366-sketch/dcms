@@ -1,0 +1,82 @@
+<view class="container">
+  <van-cell-group title="电路基本信息">
+    <van-field
+      value="{{ circuit_number }}"
+      label="电路编号"
+      placeholder="请输入电路编号"
+      required
+      bind:change="onFieldChange"
+      data-name="circuit_number"
+    />
+    <van-field
+      value="{{ circuit_name }}"
+      label="电路名称"
+      placeholder="请输入电路名称"
+      bind:change="onFieldChange"
+      data-name="circuit_name"
+    />
+    <van-cell
+      title="关联客户"
+      value="{{ customer_name || '请选择客户' }}"
+      is-link
+      bind:click="onShowCustomerPicker"
+    />
+    <van-cell
+      title="电路类型"
+      value="{{ circuit_type || '请选择类型' }}"
+      is-link
+      bind:click="onShowTypePicker"
+    />
+    <van-field
+      value="{{ bandwidth }}"
+      label="带宽"
+      placeholder="如: 100M / 1G"
+      bind:change="onFieldChange"
+      data-name="bandwidth"
+    />
+  </van-cell-group>
+
+  <van-cell-group title="业务信息">
+    <van-field
+      value="{{ business_type }}"
+      label="业务类型"
+      placeholder="如: 互联网专线 / MPLS"
+      bind:change="onFieldChange"
+      data-name="business_type"
+    />
+    <van-field
+      value="{{ ip_address }}"
+      label="IP 地址"
+      placeholder="请输入 IP 地址"
+      bind:change="onFieldChange"
+      data-name="ip_address"
+    />
+  </van-cell-group>
+
+  <view class="footer-btn">
+    <van-button type="info" block round bind:click="onSubmit">提交录入</van-button>
+  </view>
+
+  <!-- 客户选择弹出层 -->
+  <van-popup show="{{ showCustomerPicker }}" position="bottom" bind:close="onHideCustomerPicker">
+    <van-picker
+      show-toolbar
+      title="选择客户"
+      columns="{{ customers }}"
+      value-key="name"
+      bind:confirm="onConfirmCustomer"
+      bind:cancel="onHideCustomerPicker"
+    />
+  </van-popup>
+
+  <!-- 类型选择弹出层 -->
+  <van-popup show="{{ showTypePicker }}" position="bottom" bind:close="onHideTypePicker">
+    <van-picker
+      show-toolbar
+      title="选择电路类型"
+      columns="{{ typeColumns }}"
+      bind:confirm="onConfirmType"
+      bind:cancel="onHideTypePicker"
+    />
+  </van-popup>
+</view>

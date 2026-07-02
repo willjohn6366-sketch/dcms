@@ -142,6 +142,10 @@
         <el-col :span="12"><el-form-item label="本端IP"><el-input v-model="form.local_ip" /></el-form-item></el-col>
         <el-col :span="12"><el-form-item label="对端IP"><el-input v-model="form.remote_ip" /></el-form-item></el-col>
       </el-row>
+
+      <el-form-item label="备注">
+        <el-input v-model="form.remark" type="textarea" :rows="3" maxlength="500" show-word-limit />
+      </el-form-item>
     </el-form>
 
     <template #footer>
@@ -191,7 +195,8 @@ const form = reactive({
   bandwidth: undefined as number | undefined,
   open_date: '',
   local_ip: '',
-  remote_ip: ''
+  remote_ip: '',
+  remark: ''
 });
 
 const rules = reactive<FormRules<typeof form>>({
@@ -272,6 +277,7 @@ function resetForm() {
   form.open_date = '';
   form.local_ip = '';
   form.remote_ip = '';
+  form.remark = '';
 }
 
 function openCreate() {
@@ -296,6 +302,7 @@ async function openEdit(row: Circuit) {
   form.open_date = row.open_date || '';
   form.local_ip = row.local_ip || '';
   form.remote_ip = row.remote_ip || '';
+  form.remark = row.remark || '';
 
   await loadTopologyOptions(form.customer_id);
   await loadConnectionOptions(form.topology_id);
@@ -330,7 +337,8 @@ async function onSubmit() {
       bandwidth: formatBandwidth(form.bandwidth),
       open_date: form.open_date || null,
       local_ip: form.local_ip || null,
-      remote_ip: form.remote_ip || null
+      remote_ip: form.remote_ip || null,
+      remark: form.remark || null
     };
 
     if (editingId.value) {

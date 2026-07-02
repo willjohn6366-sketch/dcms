@@ -13,6 +13,7 @@ export interface Circuit {
   open_date: string | null;
   local_ip: string | null;
   remote_ip: string | null;
+  remark: string | null;
   created_at?: string;
   updated_at?: string;
   createdAt?: string;
@@ -33,4 +34,5 @@ export interface CircuitPayload {
   open_date?: string | null;
   local_ip?: string | null;
   remote_ip?: string | null;
+  remark?: string | null;
 }

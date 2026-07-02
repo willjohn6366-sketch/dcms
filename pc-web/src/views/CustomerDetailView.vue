@@ -12,39 +12,39 @@
       </div>
     </section>
 
-    <el-card class="page-card" shadow="never">
-      <template #header>
-        <div class="section-title">联系信息</div>
-      </template>
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="info-item__label">联系人</span>
-          <span class="info-item__value">{{ customer?.contact_person || '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-item__label">联系电话</span>
-          <span class="info-item__value">{{ customer?.contact_phone || '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-item__label">客户经理</span>
-          <span class="info-item__value">{{ customer?.account_manager || '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-item__label">经理电话</span>
-          <span class="info-item__value">{{ customer?.manager_phone || '-' }}</span>
-        </div>
-      </div>
-    </el-card>
-
     <el-row :gutter="18">
       <el-col :span="12">
         <el-card class="page-card" shadow="never">
           <template #header>
-            <div class="toolbar-row">
-              <div>
-                <div class="section-title">组网拓扑</div>
-                <div class="section-meta">{{ customer?.Topologies?.length || 0 }} 个拓扑</div>
-              </div>
+            <div class="section-title">联系信息</div>
+          </template>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-item__label">联系人</span>
+              <span class="info-item__value">{{ customer?.contact_person || '-' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-item__label">联系电话</span>
+              <span class="info-item__value">{{ customer?.contact_phone || '-' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-item__label">客户经理</span>
+              <span class="info-item__value">{{ customer?.account_manager || '-' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-item__label">经理电话</span>
+              <span class="info-item__value">{{ customer?.manager_phone || '-' }}</span>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="12">
+        <el-card class="page-card" shadow="never">
+          <template #header>
+            <div>
+              <div class="section-title">组网拓扑</div>
+              <div class="section-meta">{{ customer?.Topologies?.length || 0 }} 个拓扑</div>
             </div>
           </template>
 
@@ -59,29 +59,28 @@
           </el-table>
         </el-card>
       </el-col>
-
-      <el-col :span="12">
-        <el-card class="page-card" shadow="never">
-          <template #header>
-            <div>
-              <div class="section-title">电路概览</div>
-              <div class="section-meta">{{ customer?.Circuits?.length || 0 }} 条电路</div>
-            </div>
-          </template>
-
-          <el-table :data="customer?.Circuits || []">
-            <el-table-column prop="circuit_name" label="电路名称" min-width="160" />
-            <el-table-column prop="circuit_number" label="电路编号" min-width="150" />
-            <el-table-column prop="bandwidth" label="带宽" width="100" />
-            <el-table-column label="操作" width="100" fixed="right">
-              <template #default="{ row }">
-                <el-button link type="primary" @click="goCircuit(row.id)">查看</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
     </el-row>
+
+    <el-card class="page-card" shadow="never">
+      <template #header>
+        <div>
+          <div class="section-title">电路概览</div>
+          <div class="section-meta">{{ customer?.Circuits?.length || 0 }} 条电路</div>
+        </div>
+      </template>
+
+      <el-table :data="customer?.Circuits || []">
+        <el-table-column type="index" label="序号" width="70" align="center" />
+        <el-table-column prop="circuit_name" label="电路名称" min-width="220" />
+        <el-table-column prop="circuit_number" label="电路编号" min-width="180" />
+        <el-table-column prop="bandwidth" label="带宽" width="120" />
+        <el-table-column label="操作" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="goCircuit(row.id)">查看</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
   </div>
 </template>
 
@@ -182,13 +181,13 @@ onMounted(async () => {
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .info-item {
   min-width: 0;
-  padding: 16px;
+  padding: 12px;
   border: 1px solid var(--cm-border);
   border-radius: 8px;
   background: var(--cm-surface-soft);

@@ -188,7 +188,14 @@
             font-weight="700"
             fill="#203247"
           >
-            {{ label.text }}
+            <tspan
+              v-for="(line, index) in label.lines"
+              :key="`${label.key}-${index}`"
+              :x="label.x + label.width / 2"
+              :dy="index === 0 ? 0 : 15"
+            >
+              {{ line }}
+            </tspan>
           </text>
         </g>
 
@@ -277,6 +284,7 @@ interface PortLabelRender {
 interface LayoutBox {
   key: string;
   text: string;
+  lines?: string[];
   x: number;
   y: number;
   width: number;
@@ -464,7 +472,7 @@ const visualDevices = computed<DeviceRender[]>(() => {
       scale,
       iconWidth: 50 * scale,
       iconHeight: 34 * scale,
-      shortName: shorten(dev.device_name, 12),
+      shortName: dev.device_name,
       location: normalizeLocation(dev.location),
       kind,
       accent: style.accent,
@@ -760,10 +768,6 @@ function resolveDeviceKind(device: Device): DeviceKind {
   return 'other';
 }
 
-function shorten(value: string, maxLength: number) {
-  return value.length > maxLength ? `${value.slice(0, maxLength - 1)}...` : value;
-}
-
 function normalizeLocation(value: string | null | undefined) {
   return (value || '').trim();
 }
@@ -950,14 +954,17 @@ function buildResolvedLabelBoxes() {
   const boxes: LayoutBox[] = [];
 
   visualDevices.value.forEach((dev) => {
-    const width = estimateTextWidth(dev.shortName);
+    const lines = splitDeviceName(dev.shortName);
+    const width = Math.max(...lines.map((line) => estimateTextWidth(line)));
+    const height = lines.length * 15 + 8;
     boxes.push({
       key: `device:${dev.id}`,
       text: dev.shortName,
+      lines,
       x: dev.x - width / 2,
       y: dev.y + dev.iconHeight / 2 + 10,
       width,
-      height: 22,
+      height,
       baseX: dev.x - width / 2,
       baseY: dev.y + dev.iconHeight / 2 + 10,
       weightX: 0.25,
@@ -998,6 +1005,24 @@ function buildResolvedLabelBoxes() {
   });
 
   return resolveLabelCollisions(boxes);
+}
+
+function splitDeviceName(value: string) {
+  const text = String(value || '').trim() || '未命名设备';
+  const maxChars = 12;
+  const lines: string[] = [];
+  let current = '';
+
+  Array.from(text).forEach((char) => {
+    current += char;
+    if (current.length >= maxChars || /[\s/\\_-]/.test(char)) {
+      lines.push(current.trim());
+      current = '';
+    }
+  });
+
+  if (current.trim()) lines.push(current.trim());
+  return lines.slice(0, 4);
 }
 
 function resolveLabelCollisions(sourceBoxes: LayoutBox[]) {

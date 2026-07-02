@@ -46,12 +46,24 @@
         </div>
 
         <el-table :data="devices" max-height="360">
-          <el-table-column prop="device_name" label="名称" min-width="130" show-overflow-tooltip />
+          <el-table-column label="名称" min-width="220">
+            <template #default="{ row }">
+              <span class="wrap-cell strong-cell">{{ row.device_name || '-' }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="类型" width="110">
             <template #default="{ row }">{{ getDeviceTypeLabel(row.device_type) }}</template>
           </el-table-column>
-          <el-table-column prop="device_model" label="型号" min-width="130" show-overflow-tooltip />
-          <el-table-column prop="location" label="位置" min-width="130" show-overflow-tooltip />
+          <el-table-column label="型号" min-width="180">
+            <template #default="{ row }">
+              <span class="wrap-cell">{{ row.device_model || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="位置" min-width="180">
+            <template #default="{ row }">
+              <span class="wrap-cell">{{ row.location || '-' }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="140" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" @click="openDeviceEdit(row)">编辑</el-button>
@@ -74,18 +86,26 @@
         </div>
 
         <el-table :data="connections" max-height="360">
-          <el-table-column label="源端口" min-width="170" show-overflow-tooltip>
-            <template #default="{ row }">{{ getPortLabel(row.source_port_id) }}</template>
+          <el-table-column label="源端口" min-width="260">
+            <template #default="{ row }">
+              <span class="wrap-cell strong-cell">{{ getPortLabel(row.source_port_id) }}</span>
+            </template>
           </el-table-column>
-          <el-table-column label="目标端口" min-width="170" show-overflow-tooltip>
-            <template #default="{ row }">{{ getPortLabel(row.target_port_id) }}</template>
+          <el-table-column label="目标端口" min-width="260">
+            <template #default="{ row }">
+              <span class="wrap-cell strong-cell">{{ getPortLabel(row.target_port_id) }}</span>
+            </template>
           </el-table-column>
           <el-table-column label="类型" width="90" align="center">
             <template #default="{ row }">
               <el-tag effect="plain">{{ getConnectionTypeLabel(row.connection_type) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="fiber_info" label="线缆信息" min-width="140" show-overflow-tooltip />
+          <el-table-column label="线缆信息" min-width="220">
+            <template #default="{ row }">
+              <span class="wrap-cell">{{ row.fiber_info || '-' }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="130" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" @click="openConnectionEdit(row)">编辑</el-button>
@@ -170,12 +190,22 @@
     <el-form ref="connectionFormRef" :model="connectionForm" :rules="connectionRules" label-width="90px">
       <el-form-item label="源端口" prop="source_port_id">
         <el-select v-model="connectionForm.source_port_id" style="width: 100%" filterable>
-          <el-option v-for="port in allPorts" :key="port.id" :label="port.label" :value="port.id" />
+          <el-option v-for="port in allPorts" :key="port.id" :label="port.label" :value="port.id">
+            <div class="port-option" :class="{ 'port-option--child': !port.isFirstInDevice }">
+              <span v-if="!port.isFirstInDevice" class="port-option__branch" />
+              <span class="port-option__text">{{ port.displayLabel }}</span>
+            </div>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="目标端口" prop="target_port_id">
         <el-select v-model="connectionForm.target_port_id" style="width: 100%" filterable>
-          <el-option v-for="port in allPorts" :key="port.id" :label="port.label" :value="port.id" />
+          <el-option v-for="port in allPorts" :key="port.id" :label="port.label" :value="port.id">
+            <div class="port-option" :class="{ 'port-option--child': !port.isFirstInDevice }">
+              <span v-if="!port.isFirstInDevice" class="port-option__branch" />
+              <span class="port-option__text">{{ port.displayLabel }}</span>
+            </div>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="连接类型" prop="connection_type">
@@ -285,13 +315,16 @@ const connectionTypeLabels: Record<Connection['connection_type'], string> = {
 };
 
 const allPorts = computed(() => {
-  return devices.value.flatMap((dev) =>
-    (dev.Ports || []).map((port) => ({
+  return devices.value.flatMap((dev) => {
+    const deviceLabel = `${dev.location || '未填机房'} · ${dev.device_name}`;
+    return (dev.Ports || []).map((port, index) => ({
       ...port,
       deviceName: dev.device_name,
-      label: `${dev.location || '未填机房'} · ${dev.device_name}:${port.port_name}`
-    }))
-  );
+      label: `${deviceLabel}:${port.port_name}`,
+      displayLabel: index === 0 ? `${deviceLabel}:${port.port_name}` : port.port_name,
+      isFirstInDevice: index === 0
+    }));
+  });
 });
 
 const portById = computed(() => {
@@ -653,8 +686,52 @@ onMounted(async () => {
 
 .manage-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+}
+
+.manage-panel :deep(.el-table__cell) {
+  vertical-align: top;
+}
+
+.wrap-cell {
+  display: block;
+  color: var(--cm-text);
+  line-height: 1.45;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.strong-cell {
+  font-weight: 700;
+}
+
+.port-option {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.35;
+}
+
+.port-option--child {
+  padding-left: 18px;
+  color: #64748b;
+}
+
+.port-option__branch {
+  width: 12px;
+  height: 16px;
+  flex: 0 0 auto;
+  border-bottom: 1px solid #cbd5e1;
+  border-left: 1px solid #cbd5e1;
+  transform: translateY(-4px);
+}
+
+.port-option__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .head-row {

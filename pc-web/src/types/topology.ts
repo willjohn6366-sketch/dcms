@@ -6,6 +6,7 @@ export interface Port {
   port_name: string;
   port_type: 'optical' | 'electrical' | 'other';
   port_speed: string | null;
+  Device?: Device;
 }
 
 export interface Device {
@@ -27,6 +28,8 @@ export interface Connection {
   target_port_id: number;
   connection_type: 'fiber' | 'cable' | 'other';
   fiber_info: string | null;
+  SourcePort?: Port;
+  TargetPort?: Port;
   Circuits?: Array<{
     id: number;
     circuit_name: string;

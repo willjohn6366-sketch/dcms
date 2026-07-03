@@ -36,8 +36,8 @@ class CircuitService {
         {
           model: Connection,
           include: [
-            { model: Port, as: 'SourcePort' },
-            { model: Port, as: 'TargetPort' }
+            { model: Port, as: 'SourcePort', include: [Device] },
+            { model: Port, as: 'TargetPort', include: [Device] }
           ]
         }
       ]

@@ -119,6 +119,8 @@
       title="选择客户"
       :options="customerOptions"
       :selected-value="customerId"
+      searchable
+      search-placeholder="搜索客户名称 / 联系人 / 客户经理"
       @close="customerPickerVisible = false"
       @select="onCustomerSelect"
     />
@@ -179,7 +181,13 @@ const topologyPickerVisible = ref(false);
 const connectionPickerVisible = ref(false);
 
 const customerOptions = computed<SelectOption[]>(() =>
-  allCustomers.value.map(c => ({ label: c.name, value: c.id }))
+  [...allCustomers.value]
+    .sort((a, b) => getCustomerCreatedTime(a) - getCustomerCreatedTime(b))
+    .map(c => ({
+      label: c.name,
+      value: c.id,
+      subtitle: [c.contact_person, c.account_manager].filter(Boolean).join(' / ') || undefined
+    }))
 );
 
 async function pickCustomer() {
@@ -253,6 +261,11 @@ function formatConnectionLabel(conn: TopologyConnection) {
   const source = conn.source_port_id ? topologyPortLabels.value[conn.source_port_id] : '';
   const target = conn.target_port_id ? topologyPortLabels.value[conn.target_port_id] : '';
   return `连接 #${conn.id}（${source || `端口 ${conn.source_port_id || '?'}`} ↔ ${target || `端口 ${conn.target_port_id || '?'}`}）`;
+}
+
+function getCustomerCreatedTime(customer: Customer) {
+  const time = new Date(customer.created_at || customer.createdAt || '').getTime();
+  return Number.isNaN(time) ? 0 : time;
 }
 
 function showTypePicker() {

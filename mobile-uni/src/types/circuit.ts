@@ -6,6 +6,7 @@ export interface TopologyPort {
   port_name: string;
   port_type: string | null;
   port_speed: string | null;
+  Device?: TopologyDevice | null;
 }
 
 export interface TopologyDevice {
@@ -61,6 +62,11 @@ export interface Circuit {
   open_date: string | null;
   local_ip: string | null;
   remote_ip: string | null;
+  remark: string | null;
+  created_at?: string;
+  updated_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
   Customer?: Customer;
   Topology?: CircuitTopology | null;
   Connection?: CircuitConnectionDetail | null;

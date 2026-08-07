@@ -1,7 +1,7 @@
 {
   "name": "circuit-management",
   "displayName": "电路台账管理平台",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": "https://github.com/willjohn6366-sketch/dcms",
   "update": {
     "url": "https://github.com/willjohn6366-sketch/dcms",
@@ -10,10 +10,10 @@
       "https://raw.githubusercontent.com/willjohn6366-sketch/dcms/master/version.json"
     ]
   },
-  "releasedAt": "2026-07-02",
+  "releasedAt": "2026-08-07",
   "changes": [
-    "切换为 SQLite 单文件数据库，适配单机轻量化部署。",
-    "完善客户、电路、组网拓扑、连接和数据维护功能。",
-    "新增 PC 端关于页面与版本展示。"
+    "完善移动端电路详情字段展示，补充备注、连接信息和带宽单位。",
+    "调整最近客户按最近编辑时间排序。",
+    "新增电路选择归属客户时支持按新增顺序浏览和模糊搜索。"
   ]
 }

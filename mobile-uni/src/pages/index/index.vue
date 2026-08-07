@@ -247,7 +247,7 @@ const pulseItems = computed(() => [
 ]);
 
 const recentCustomers = computed(() => {
-  return customers.value.slice(0, 4).map((customer) => {
+  return [...customers.value].sort((a, b) => getCustomerUpdatedTime(b) - getCustomerUpdatedTime(a)).slice(0, 4).map((customer) => {
     const circuitTotal = customer.Circuits?.length ?? 0;
     return {
       id: customer.id,
@@ -255,7 +255,7 @@ const recentCustomers = computed(() => {
       initial: customer.name.slice(0, 1),
       meta: customer.account_manager
         ? `${customer.account_manager} 负责`
-        : formatDate(customer.latest_check_date || customer.updated_at),
+        : formatDate(customer.latest_check_date || customer.updated_at || customer.updatedAt),
       circuitText: circuitTotal ? `${circuitTotal} 条` : '未绑定'
     };
   });
@@ -289,7 +289,7 @@ function openSearchResult(item: SearchResult) {
   goTo(url);
 }
 
-function formatDate(value: string | null) {
+function formatDate(value: string | null | undefined) {
   if (!value) {
     return '待完善资料';
   }
@@ -300,6 +300,11 @@ function formatDate(value: string | null) {
   }
 
   return `${date.getMonth() + 1}月${date.getDate()}日更新`;
+}
+
+function getCustomerUpdatedTime(customer: Customer) {
+  const time = new Date(customer.updated_at || customer.updatedAt || '').getTime();
+  return Number.isNaN(time) ? 0 : time;
 }
 
 async function loadSummary() {

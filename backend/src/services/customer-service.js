@@ -16,7 +16,8 @@ class CustomerService {
           model: Circuit,
           attributes: ['id']
         }
-      ]
+      ],
+      order: [['updated_at', 'DESC']]
     });
   }
 

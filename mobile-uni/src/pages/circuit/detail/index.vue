@@ -3,7 +3,6 @@
     <view class="hero">
       <view class="hero__body">
         <view class="hero__title">{{ circuit.circuit_name }}</view>
-        <view class="hero__meta">{{ circuit.circuit_type || '未分类' }} · {{ circuit.bandwidth || '未填带宽' }}</view>
       </view>
       <view class="hero__edit" @tap="editCircuit">编辑</view>
     </view>
@@ -20,13 +19,34 @@
           <text class="info-item__value">{{ circuit.Customer?.name || '未绑定' }}</text>
         </view>
         <view class="info-item">
+          <text class="info-item__label">电路类型</text>
+          <text class="info-item__value">{{ circuit.circuit_type || '未填写' }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-item__label">带宽</text>
+          <text class="info-item__value">{{ formatBandwidth(circuit.bandwidth) }}</text>
+        </view>
+        <view class="info-item">
           <text class="info-item__label">所属拓扑</text>
           <text class="info-item__value">{{ circuit.Topology?.topology_name || '未绑定' }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-item__label">绑定连接</text>
+          <text class="info-item__value">{{ connectionLabel }}</text>
         </view>
         <view class="info-item">
           <text class="info-item__label">开通日期</text>
           <text class="info-item__value">{{ circuit.open_date || '未填写' }}</text>
         </view>
+        <view class="info-item">
+          <text class="info-item__label">更新时间</text>
+          <text class="info-item__value">{{ formatDateTime(circuit.updated_at || circuit.updatedAt) }}</text>
+        </view>
+      </view>
+
+      <view class="remark-box">
+        <text class="info-item__label">备注</text>
+        <text class="remark-box__value">{{ circuit.remark || '未填写' }}</text>
       </view>
     </view>
 
@@ -41,6 +61,33 @@
           <text class="ip-path__label">对端 IP</text>
           <text class="ip-path__value">{{ circuit.remote_ip || '未填写' }}</text>
         </view>
+      </view>
+    </view>
+
+    <view class="block">
+      <view class="block__title">连接信息</view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-item__label">源端口</text>
+          <text class="info-item__value">{{ sourcePortLabel }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-item__label">目标端口</text>
+          <text class="info-item__value">{{ targetPortLabel }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-item__label">连接类型</text>
+          <text class="info-item__value">{{ connectionTypeLabel }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-item__label">创建时间</text>
+          <text class="info-item__value">{{ formatDateTime(circuit.created_at || circuit.createdAt) }}</text>
+        </view>
+      </view>
+
+      <view class="remark-box">
+        <text class="info-item__label">线缆信息</text>
+        <text class="remark-box__value">{{ circuit.Connection?.fiber_info || '未填写' }}</text>
       </view>
     </view>
 
@@ -236,6 +283,27 @@ const CONNECTION_LEGEND = [
 
 const topologyDevices = computed(() => circuit.value?.Topology?.Devices || []);
 const topologyConnections = computed(() => circuit.value?.Topology?.Connections || []);
+
+const connectionTypeLabels = {
+  fiber: '光纤',
+  cable: '网线',
+  other: '其他'
+} as const;
+
+const sourcePortLabel = computed(() => formatConnectionPort(circuit.value?.Connection?.SourcePort));
+const targetPortLabel = computed(() => formatConnectionPort(circuit.value?.Connection?.TargetPort));
+const connectionTypeLabel = computed(() => {
+  const type = circuit.value?.Connection?.connection_type;
+  if (!type) return '未绑定';
+  return type in connectionTypeLabels
+    ? connectionTypeLabels[type as keyof typeof connectionTypeLabels]
+    : '其他';
+});
+const connectionLabel = computed(() => {
+  if (!circuit.value?.connection_id) return '未绑定';
+  if (!circuit.value.Connection) return `#${circuit.value.connection_id}`;
+  return `${sourcePortLabel.value} → ${targetPortLabel.value}`;
+});
 
 const endpointPortIds = computed(() => {
   const source = circuit.value?.Connection?.SourcePort?.id;
@@ -522,6 +590,23 @@ function getDeviceStyle(type: string | null | undefined) {
     other: { accent: '#7a8496', surface: '#f8fbff' }
   };
   return map[type || ''] || map.other;
+}
+
+function formatConnectionPort(port: TopologyPort | null | undefined) {
+  if (!port) return '未绑定';
+  const deviceName = port.Device?.device_name || findDeviceByPortId(port.id)?.device_name;
+  return deviceName ? `${deviceName}:${port.port_name}` : port.port_name;
+}
+
+function formatDateTime(value: string | null | undefined) {
+  if (!value) return '未填写';
+  return value.replace('T', ' ').slice(0, 16);
+}
+
+function formatBandwidth(value: string | null | undefined) {
+  const text = String(value || '').trim();
+  if (!text) return '未填带宽';
+  return /^\d+$/.test(text) ? `${text}M` : text;
 }
 
 function getShortName(name: string) {
@@ -887,6 +972,26 @@ onShow(() => {
   line-height: 1.6;
   color: var(--cm-text);
   font-weight: 600;
+  word-break: break-all;
+}
+
+.remark-box {
+  margin-top: 16rpx;
+  padding: 20rpx;
+  border: 1rpx solid #edf1f7;
+  border-radius: 18rpx;
+  background: #f8fbff;
+  box-sizing: border-box;
+}
+
+.remark-box__value {
+  display: block;
+  margin-top: 10rpx;
+  color: var(--cm-text);
+  font-size: 24rpx;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: pre-wrap;
   word-break: break-all;
 }
 

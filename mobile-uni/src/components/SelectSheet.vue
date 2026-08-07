@@ -6,9 +6,21 @@
         <view class="select-sheet__close" @tap="close">×</view>
       </view>
 
+      <view v-if="searchable" class="select-sheet__search">
+        <view class="select-sheet__search-icon" />
+        <input
+          v-model="keyword"
+          class="select-sheet__search-input"
+          :placeholder="searchPlaceholder || '搜索'"
+          placeholder-class="select-sheet__search-placeholder"
+          confirm-type="search"
+        />
+        <text v-if="keyword" class="select-sheet__search-clear" @tap="keyword = ''">×</text>
+      </view>
+
       <view class="select-sheet__list">
         <view
-          v-for="option in options"
+          v-for="option in filteredOptions"
           :key="String(option.value)"
           class="select-sheet__item"
           :class="{ 'select-sheet__item--active': isSelected(option) }"
@@ -20,6 +32,9 @@
           </view>
           <text v-if="isSelected(option)" class="select-sheet__check">✓</text>
         </view>
+        <view v-if="!filteredOptions.length" class="select-sheet__empty">
+          <text class="select-sheet__empty-text">无匹配结果</text>
+        </view>
       </view>
 
       <view class="select-sheet__cancel" @tap="close">取消</view>
@@ -28,6 +43,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+
 export interface SelectSheetOption {
   label: string;
   value: string | number;
@@ -39,12 +56,34 @@ const props = defineProps<{
   title: string;
   options: SelectSheetOption[];
   selectedValue?: string | number;
+  searchable?: boolean;
+  searchPlaceholder?: string;
 }>();
 
 const emit = defineEmits<{
   close: [];
   select: [option: SelectSheetOption];
 }>();
+
+const keyword = ref('');
+
+const filteredOptions = computed(() => {
+  const text = keyword.value.trim().toLowerCase();
+  if (!props.searchable || !text) return props.options;
+
+  return props.options.filter((option) =>
+    [option.label, option.subtitle]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(text))
+  );
+});
+
+watch(
+  () => props.visible,
+  (visible) => {
+    if (!visible) keyword.value = '';
+  }
+);
 
 function close() {
   emit('close');
@@ -114,6 +153,65 @@ function isSelected(option: SelectSheetOption) {
   flex-shrink: 0;
 }
 
+.select-sheet__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 74rpx;
+  margin-bottom: 16rpx;
+  padding: 0 70rpx 0 44rpx;
+  border: 1rpx solid var(--cm-border);
+  border-radius: 18rpx;
+  background: #f8fbff;
+  box-sizing: border-box;
+}
+
+.select-sheet__search-icon {
+  position: absolute;
+  left: 18rpx;
+  width: 18rpx;
+  height: 18rpx;
+  border: 3rpx solid var(--cm-muted);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.select-sheet__search-icon::after {
+  content: '';
+  position: absolute;
+  right: -9rpx;
+  bottom: -7rpx;
+  width: 10rpx;
+  height: 3rpx;
+  border-radius: 999rpx;
+  background: var(--cm-muted);
+  transform: rotate(45deg);
+}
+
+.select-sheet__search-input {
+  width: 100%;
+  height: 72rpx;
+  color: var(--cm-text);
+  font-size: 26rpx;
+  line-height: 72rpx;
+}
+
+.select-sheet__search-placeholder {
+  color: #a8b1c2;
+}
+
+.select-sheet__search-clear {
+  position: absolute;
+  right: 18rpx;
+  top: 13rpx;
+  width: 48rpx;
+  height: 48rpx;
+  color: var(--cm-muted);
+  font-size: 34rpx;
+  line-height: 46rpx;
+  text-align: center;
+}
+
 .select-sheet__list {
   max-height: 560rpx;
   overflow-y: auto;
@@ -174,6 +272,18 @@ function isSelected(option: SelectSheetOption) {
   font-size: 32rpx;
   font-weight: 700;
   flex-shrink: 0;
+}
+
+.select-sheet__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140rpx;
+}
+
+.select-sheet__empty-text {
+  color: var(--cm-muted);
+  font-size: 26rpx;
 }
 
 .select-sheet__cancel {

@@ -10,5 +10,7 @@ export interface Customer {
   latest_check_date: string | null;
   created_at: string;
   updated_at: string;
+  createdAt?: string;
+  updatedAt?: string;
   Circuits?: Circuit[];
 }

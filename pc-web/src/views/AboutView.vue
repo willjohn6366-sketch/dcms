@@ -35,7 +35,11 @@ interface VersionInfo {
 interface LatestVersionPayload {
   latest: VersionInfo;
   hasUpdate: boolean;
-  updateUrl?: string;
+}
+
+interface UpdatePayload {
+  branch: string;
+  output: string;
 }
 
 const appVersion = versionInfo.version;
@@ -66,7 +70,17 @@ async function checkUpdate() {
       cancelButtonText: '取消',
       type: 'info'
     });
-    window.open(result.updateUrl || versionInfo.repository, '_blank');
+    const updateRes = await fetch('/api/version/update', { method: 'POST' });
+    const updatePayload = await updateRes.json();
+    if (!updateRes.ok || !updatePayload.success) {
+      throw new Error(updatePayload?.error?.message || '更新失败');
+    }
+
+    const updateResult = updatePayload.data as UpdatePayload;
+    await ElMessageBox.alert(formatUpdateResult(updateResult), '更新完成', {
+      confirmButtonText: '知道了',
+      type: 'success'
+    });
   } catch (error) {
     if (error === 'cancel' || error === 'close') return;
     ElMessage.error((error as Error).message || '检查更新失败');
@@ -80,6 +94,10 @@ function formatUpdateMessage(latest: VersionInfo) {
     ? latest.changes.map((item, index) => `${index + 1}. ${item}`).join('\n')
     : '暂无更新说明';
   return `版本号：v${latest.version}\n\n下一版本更新内容：\n${changes}`;
+}
+
+function formatUpdateResult(result: UpdatePayload) {
+  return `已拉取 ${result.branch} 分支最新代码。\n\n${result.output || 'Already up to date.'}\n\n如果页面或服务仍是旧版本，请重启服务后刷新页面。`;
 }
 </script>
 

@@ -1,6 +1,8 @@
 const express = require('express');
 const fs = require('fs/promises');
 const path = require('path');
+const { execFile } = require('child_process');
+const { promisify } = require('util');
 const router = express.Router();
 
 const customerRoutes = require('./customer-routes');
@@ -10,6 +12,9 @@ const portRoutes = require('./port-routes');
 const connectionRoutes = require('./connection-routes');
 const circuitRoutes = require('./circuit-routes');
 const dataRoutes = require('./data-routes');
+const { success } = require('../utils/response');
+
+const execFileAsync = promisify(execFile);
 
 /**
  * 路由汇总
@@ -44,6 +49,15 @@ router.get('/version/latest', async (req, res, next) => {
       },
       message: '操作成功'
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/version/update', async (req, res, next) => {
+  try {
+    const result = await pullLatestCode();
+    res.json(success(result, '代码更新完成'));
   } catch (error) {
     next(error);
   }
@@ -108,6 +122,51 @@ async function fetchLatestVersion(localVersion) {
   error.statusCode = 502;
   error.code = 'REMOTE_VERSION_CHECK_FAILED';
   throw error;
+}
+
+async function pullLatestCode() {
+  const repoRoot = path.join(__dirname, '../../..');
+
+  await runGit(['rev-parse', '--is-inside-work-tree'], repoRoot, '当前运行目录不是 Git 工作区，无法直接拉取代码');
+
+  const status = await runGit(['status', '--porcelain'], repoRoot, '无法检查本地代码状态');
+  if (status.stdout.trim()) {
+    const error = new Error('本地有未提交改动，已停止更新，避免覆盖当前修改');
+    error.statusCode = 409;
+    error.code = 'GIT_WORKTREE_DIRTY';
+    throw error;
+  }
+
+  const branch = (await runGit(['branch', '--show-current'], repoRoot, '无法读取当前分支')).stdout.trim();
+  if (!branch) {
+    const error = new Error('当前不在明确分支上，无法自动更新');
+    error.statusCode = 409;
+    error.code = 'GIT_BRANCH_DETACHED';
+    throw error;
+  }
+
+  const pull = await runGit(['pull', '--ff-only'], repoRoot, '拉取远程代码失败');
+
+  return {
+    branch,
+    output: [pull.stdout, pull.stderr].filter(Boolean).join('\n').trim() || 'Already up to date.'
+  };
+}
+
+async function runGit(args, cwd, fallbackMessage) {
+  try {
+    return await execFileAsync('git', args, {
+      cwd,
+      timeout: 60000,
+      maxBuffer: 1024 * 1024
+    });
+  } catch (error) {
+    const detail = [error.stderr, error.stdout, error.message].filter(Boolean).join('\n').trim();
+    const nextError = new Error(detail || fallbackMessage);
+    nextError.statusCode = error.code === 'ENOENT' ? 500 : 409;
+    nextError.code = error.code === 'ENOENT' ? 'GIT_NOT_AVAILABLE' : 'GIT_UPDATE_FAILED';
+    throw nextError;
+  }
 }
 
 function compareVersion(latest, current) {

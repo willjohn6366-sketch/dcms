@@ -182,7 +182,7 @@ const connectionPickerVisible = ref(false);
 
 const customerOptions = computed<SelectOption[]>(() =>
   [...allCustomers.value]
-    .sort((a, b) => getCustomerCreatedTime(a) - getCustomerCreatedTime(b))
+    .sort((a, b) => getCustomerCreatedTime(b) - getCustomerCreatedTime(a) || b.id - a.id)
     .map(c => ({
       label: c.name,
       value: c.id,

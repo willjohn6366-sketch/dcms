@@ -1,4 +1,6 @@
 <template>
+  <div class="management-page">
+    <header class="management-heading"><h1>电路管理</h1><p>管理电路台账、带宽与开通信息</p></header>
   <div class="table-shell circuits-page">
     <div class="table-shell__toolbar">
       <div class="table-shell__filters">
@@ -23,7 +25,7 @@
       </el-button>
     </div>
 
-    <el-table class="circuit-table" :data="circuits" v-loading="loading" height="calc(100vh - 250px)">
+    <el-table class="circuit-table" :data="circuits" v-loading="loading" height="max(280px, calc(100vh - 300px))">
       <el-table-column type="index" label="序号" width="70" align="center" :index="getRowIndex" />
       <el-table-column label="单位名称" min-width="200" show-overflow-tooltip>
         <template #default="{ row }">
@@ -153,6 +155,7 @@
       <el-button type="primary" :loading="submitting" @click="onSubmit">保存</el-button>
     </template>
   </el-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,4 +1,6 @@
 <template>
+  <div class="management-page">
+    <header class="management-heading"><h1>数据维护</h1><p>管理本地备份、数据导入与恢复</p></header>
   <div class="data-page">
     <section class="backup-panel">
       <div class="panel-head">
@@ -73,6 +75,7 @@
         </div>
       </section>
     </aside>
+  </div>
   </div>
 </template>
 
@@ -311,7 +314,7 @@ onMounted(() => {
   border: 1px solid rgba(226, 232, 240, 0.78);
   border-radius: 8px;
   background: var(--cm-surface);
-  box-shadow: 0 12px 30px rgba(25, 43, 78, 0.055);
+  box-shadow: none;
 }
 
 .panel-head {
@@ -321,7 +324,7 @@ onMounted(() => {
   justify-content: space-between;
   gap: 16px;
   border-bottom: 1px solid rgba(226, 232, 240, 0.68);
-  padding: 14px 18px;
+  padding: 22px 24px;
 }
 
 .backup-time {
@@ -349,17 +352,18 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 18px;
+  padding: 24px;
 }
 
 .side-card__title {
   color: var(--cm-text);
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .side-card .el-button {
   width: 100%;
+  margin-left: 0;
 }
 
 .side-card--danger {
@@ -408,5 +412,9 @@ onMounted(() => {
   color: var(--cm-text);
   font-size: 16px;
   font-weight: 800;
+}
+@media (max-width: 1400px) {
+  .data-page { grid-template-columns: minmax(0, 1fr); }
+  .side-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 </style>

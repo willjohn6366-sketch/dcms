@@ -1,4 +1,6 @@
 <template>
+  <div class="management-page">
+    <header class="management-heading"><h1>客户管理</h1><p>维护客户单位、联系人与客户经理信息</p></header>
   <div class="table-shell customers-page">
     <div class="table-shell__toolbar">
       <div class="table-shell__filters">
@@ -23,7 +25,7 @@
       </el-button>
     </div>
 
-    <el-table class="customer-table" :data="customers" v-loading="loading" height="calc(100vh - 250px)">
+    <el-table class="customer-table" :data="customers" v-loading="loading" height="max(280px, calc(100vh - 300px))">
       <el-table-column type="index" label="序号" width="70" align="center" :index="getRowIndex" />
       <el-table-column label="单位名称" min-width="260" show-overflow-tooltip>
         <template #default="{ row }">
@@ -106,6 +108,7 @@
       <el-button type="primary" :loading="submitting" @click="onSubmit">保存</el-button>
     </template>
   </el-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">

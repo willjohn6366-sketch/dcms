@@ -1,7 +1,7 @@
 {
   "name": "circuit-management",
   "displayName": "电路台账管理平台",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": "https://github.com/willjohn6366-sketch/dcms",
   "update": {
     "url": "https://github.com/willjohn6366-sketch/dcms",
@@ -10,10 +10,10 @@
       "https://raw.githubusercontent.com/willjohn6366-sketch/dcms/master/version.json"
     ]
   },
-  "releasedAt": "2026-08-07",
+  "releasedAt": "2026-10-26",
   "changes": [
-    "完善移动端电路详情字段展示，补充备注、连接信息和带宽单位。",
-    "调整最近客户按最近编辑时间排序。",
-    "新增电路选择归属客户时支持按新增顺序浏览和模糊搜索。"
+    "重新设计桌面端首页、关于页和客户详情页。",
+    "统一客户、电路、组网拓扑和数据维护页面的视觉风格。",
+    "移除顶部搜索、用户信息和面包屑，优化页面间距与窗口适配。"
   ]
 }

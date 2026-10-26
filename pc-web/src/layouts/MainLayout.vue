@@ -1,16 +1,17 @@
 <template>
   <el-container class="shell">
-    <el-aside width="232px" class="aside">
+    <el-aside width="210px" class="aside">
       <div class="brand">
+        <div class="brand__icon"><el-icon><Collection /></el-icon></div>
         <div class="brand__copy">
           <div class="brand__title">电路台账</div>
-          <div class="brand__sub">资料管理工作台</div>
+          <div class="brand__sub">资料管理平台</div>
         </div>
       </div>
 
       <el-menu :default-active="activePath" class="menu" router>
         <el-menu-item index="/dashboard">
-          <el-icon><DataBoard /></el-icon>
+          <el-icon><HomeFilled /></el-icon>
           <span>工作台</span>
         </el-menu-item>
         <el-menu-item index="/customers">
@@ -37,7 +38,7 @@
     </el-aside>
 
     <el-container>
-      <el-main class="main">
+      <el-main class="main" :class="{ 'main--dashboard': activePath === '/dashboard', 'main--about': activePath === '/about', 'main--customer-detail': route.name === 'customer-detail' }">
         <div class="main__inner">
           <RouterView />
         </div>
@@ -49,7 +50,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { Connection, DataBoard, Document, FolderOpened, InfoFilled, User } from '@element-plus/icons-vue';
+import { Collection, Connection, HomeFilled, Document, FolderOpened, InfoFilled, User } from '@element-plus/icons-vue';
 
 const route = useRoute();
 const activePath = computed(() => {
@@ -76,7 +77,21 @@ const activePath = computed(() => {
 .brand {
   display: flex;
   align-items: center;
-  padding: 24px 22px 18px;
+  gap: 14px;
+  height: 88px;
+  padding: 20px 23px;
+}
+
+.brand__icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 39px;
+  flex-shrink: 0;
+  clip-path: polygon(50% 0, 96% 24%, 96% 76%, 50% 100%, 4% 76%, 4% 24%);
+  background: linear-gradient(145deg, #469dff, #1864ff);
+  color: #fff;
+  font-size: 23px;
 }
 
 .brand__copy {
@@ -85,7 +100,7 @@ const activePath = computed(() => {
 
 .brand__title {
   color: var(--cm-text);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   line-height: 1.25;
 }
@@ -100,12 +115,13 @@ const activePath = computed(() => {
 .menu {
   border-right: none;
   background: transparent;
-  padding: 4px 12px;
+  padding: 2px 9px;
 }
 
 .menu :deep(.el-menu-item) {
-  height: 44px;
-  margin: 4px 0;
+  height: 50px;
+  font-size: 16px;
+  margin: 4px 0 10px;
   border-radius: 8px;
   color: var(--cm-muted);
   font-weight: 700;
@@ -113,8 +129,8 @@ const activePath = computed(() => {
 
 .menu :deep(.el-icon) {
   width: 18px;
-  margin-right: 10px;
-  font-size: 18px;
+  margin-right: 16px;
+  font-size: 20px;
 }
 
 .menu :deep(.el-menu-item:hover) {
@@ -130,13 +146,35 @@ const activePath = computed(() => {
 .main {
   min-width: 0;
   overflow: auto;
-  padding: 24px;
+  padding: 30px 38px;
   background: var(--cm-bg);
 }
 
 .main__inner {
   width: 100%;
-  max-width: 1440px;
+  max-width: none;
   margin: 0 auto;
+}
+.main--dashboard {
+  padding: 0 18px 10px;
+  background: radial-gradient(ellipse at 73% 0, #e3eeff 0, transparent 46%), #f4f7fb;
+}
+
+.main--dashboard .main__inner {
+  max-width: none;
+}
+.main--about,
+.main--customer-detail {
+  padding: 0;
+}
+
+.main--about .main__inner,
+.main--customer-detail .main__inner {
+  max-width: none;
+}
+@media (max-width: 1200px) {
+  .main:not(.main--dashboard):not(.main--about):not(.main--customer-detail) {
+    padding: 24px;
+  }
 }
 </style>

@@ -1,28 +1,46 @@
 <template>
   <div class="about-page">
-    <section class="about-sheet">
-      <div class="about-main">
-        <div class="about-kicker">关于</div>
-        <h1><span>{{ versionInfo.displayName }}</span></h1>
-        <p>自用的局域网电路信息管理工具，用于维护客户资料、电路台账、组网拓扑、端口连接和本地数据备份。</p>
-      </div>
-
-      <div class="version-area">
-        <div class="version-copy">
-          <span>当前版本</span>
-          <strong>v{{ appVersion }}</strong>
+    <div class="about-content">
+      <section class="about-details" aria-label="关于电路台账管理平台">
+        <div class="about-intro">
+          <div class="app-logo"><el-icon><Collection /></el-icon></div>
+          <div class="about-copy">
+            <h1>{{ versionInfo.displayName }}</h1>
+            <p>自用的局域网电路信息管理工具，用于维护客户资料、电路台账、<br />组网拓扑、端口连接和本地数据备份。</p>
+          </div>
         </div>
-        <el-button type="primary" plain :loading="checkingUpdate" @click="checkUpdate">检查更新</el-button>
-      </div>
 
-      <div class="about-footer">by：斯坦尼斯王夫斯基</div>
-    </section>
+        <dl class="about-information">
+          <div class="information-row information-row--version">
+            <dt><el-icon><CopyDocument /></el-icon><span>当前版本</span></dt>
+            <dd><strong class="version-number">v{{ appVersion }}</strong></dd>
+            <el-button class="update-button" type="primary" plain :loading="checkingUpdate" @click="checkUpdate">
+              <el-icon v-if="!checkingUpdate"><Refresh /></el-icon>检查更新
+            </el-button>
+          </div>
+          <div class="information-row">
+            <dt><el-icon><User /></el-icon><span>开发者</span></dt>
+            <dd>斯坦尼斯王夫斯基</dd>
+          </div>
+          <div class="information-row">
+            <dt><el-icon><Message /></el-icon><span>联系方式</span></dt>
+            <dd>-</dd>
+          </div>
+          <div class="information-row">
+            <dt><el-icon><Clock /></el-icon><span>更新时间</span></dt>
+            <dd>{{ versionInfo.releasedAt || '-' }}</dd>
+          </div>
+        </dl>
+      </section>
+      <img class="about-illustration" src="../assets/about-platform.svg" alt="蓝色台账图标与分层数据平台插画" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ref } from 'vue';
+import { Collection, CopyDocument, User, Message, Clock, Refresh } from '@element-plus/icons-vue';
 import versionInfo from '../../../version.json';
 
 interface VersionInfo {
@@ -103,116 +121,215 @@ function formatUpdateResult(result: UpdatePayload) {
 
 <style scoped>
 .about-page {
-  display: flex;
-  min-height: calc(100vh - 48px);
-  justify-content: center;
-  padding: 32px;
-}
-
-.about-sheet {
-  width: min(100%, 720px);
-  border: 1px solid rgba(226, 232, 240, 0.86);
-  border-radius: 8px;
-  background: var(--cm-surface);
-  box-shadow: 0 10px 26px rgba(25, 43, 78, 0.045);
-}
-
-.about-main {
-  padding: 24px 34px 16px;
-  text-align: center;
-}
-
-.about-main h1 {
   position: relative;
-  display: inline-block;
-  margin: 6px 0 0;
-  font-size: 25px;
-  font-weight: 900;
-  line-height: 1.25;
+  display: grid;
+  min-height: 100vh;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background: radial-gradient(ellipse at 85% 27%, #eaf1ff 0, #f4f7fd 44%, #f9fbfe 100%);
 }
 
-.about-main h1 span {
+.about-page::before,
+.about-page::after {
+  position: absolute;
+  z-index: -1;
+  width: 720px;
+  height: 1050px;
+  border: 105px solid #dbe7ff;
+  border-radius: 48%;
+  content: '';
+  pointer-events: none;
+  transform: rotate(39deg);
+}
+
+.about-page::before {
+  top: -680px;
+  right: -380px;
+  opacity: .32;
+}
+
+.about-page::after {
+  top: -435px;
+  right: -670px;
+  opacity: .2;
+}
+
+.about-content {
+  display: grid;
+  width: min(1100px, 76%);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  margin: 0 auto;
+  padding: 65px 0;
+  transform: translateY(20px);
+}
+
+.about-details {
   position: relative;
   z-index: 1;
-  background: linear-gradient(90deg, #162033 0%, #2563eb 48%, #0f766e 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  min-width: 0;
 }
 
-.about-main h1::before {
-  content: '';
-  position: absolute;
-  right: -10px;
-  bottom: 1px;
-  left: -10px;
-  height: 11px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(37, 99, 235, 0.13), rgba(15, 118, 110, 0.13));
+.about-intro {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: start;
+  gap: 30px;
 }
 
-.about-main h1::after {
-  content: '';
-  position: absolute;
-  right: 26%;
-  bottom: -9px;
-  left: 26%;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #f59e0b, #2563eb, #0f766e);
+.app-logo {
+  display: grid;
+  width: 82px;
+  height: 82px;
+  place-items: center;
+  border: 1px solid #6da6ff;
+  border-radius: 17px;
+  background: linear-gradient(145deg, #168aff, #2457f5);
+  box-shadow: inset 0 1px 2px #ffffff55, 0 6px 18px #2174ff0a;
+  color: #fff;
+  font-size: 47px;
 }
 
-.about-kicker {
-  color: var(--cm-muted);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
+.about-copy h1 {
+  margin: 12px 0 24px;
+  color: #0d1830;
+  font-size: clamp(27px, 2.1vw, 36px);
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: .3px;
 }
 
-.about-main p {
-  max-width: 560px;
-  margin: 12px auto 0;
-  color: #536174;
-  font-size: 14px;
-  font-weight: 700;
+.about-copy p {
+  max-width: 550px;
+  margin: 0;
+  color: #697b98;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.85;
+}
+
+.about-information {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 36px 0 0;
+}
+
+.information-row {
+  display: grid;
+  min-height: 53px;
+  grid-template-columns: 170px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0;
+}
+
+.information-row--version {
+  grid-template-columns: 170px 138px auto;
+  min-height: 65px;
+  margin-bottom: 13px;
+}
+
+.information-row dt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #7b8ba3;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.information-row dt .el-icon {
+  font-size: 22px;
+}
+
+.information-row dd {
+  margin: 0;
+  color: #1b2941;
+  font-size: 16px;
+  font-weight: 550;
   line-height: 1.6;
 }
 
-.version-area {
+.version-number {
+  color: #111c34;
+  font-size: 21px;
+  font-weight: 750;
+}
+
+.update-button {
+  justify-self: start;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 22px;
-  margin: 0 34px;
-  border-top: 1px solid rgba(226, 232, 240, 0.72);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.72);
-  padding: 13px 0;
+  height: 44px;
+  gap: 9px;
+  margin-right: 12px;
+  padding: 0 17px;
+  border: 1px solid #c9dfff;
+  border-radius: 10px;
+  background: #eaf3ff;
+  color: #287eff;
+  font-size: 16px;
+  font-weight: 650;
 }
 
-.version-copy {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.version-copy span {
-  color: var(--cm-muted);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.version-copy strong {
-  color: var(--cm-text);
+.update-button .el-icon {
   font-size: 20px;
-  font-weight: 900;
-  line-height: 1;
 }
 
-.about-footer {
-  padding: 9px 30px 11px;
-  color: #a0aabc;
-  font-size: 12px;
-  font-weight: 700;
-  text-align: center;
+.about-illustration {
+  width: 120%;
+  max-width: 620px;
+  height: auto;
+  margin: 120px 0 0 -18px;
+  pointer-events: none;
+}
+
+@media (max-width: 1400px) {
+  .about-content {
+    width: 88%;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+
+  .about-intro {
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  .app-logo {
+    width: 70px;
+    height: 70px;
+    font-size: 40px;
+  }
+
+  .information-row,
+  .information-row--version {
+    grid-template-columns: 145px minmax(0, 1fr) auto;
+  }
+
+  .update-button {
+    margin-right: 0;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .about-content {
+    width: min(650px, 86%);
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 60px 0;
+    transform: none;
+  }
+
+  .about-copy h1 {
+    font-size: 27px;
+  }
+
+  .about-illustration {
+    width: 300px;
+    margin: 0 auto;
+  }
 }
 </style>

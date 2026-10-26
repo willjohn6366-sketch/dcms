@@ -1,6 +1,6 @@
 <template>
-  <div class="page-stack" v-loading="loading">
-    <section class="detail-hero page-card">
+  <div class="page-stack resource-detail" v-loading="loading">
+    <section class="detail-hero">
       <div>
         <div class="detail-hero__label">{{ circuit?.circuit_type || '未分类' }} · {{ circuit?.bandwidth || '未填带宽' }}</div>
         <h1 class="detail-hero__title">{{ circuit?.circuit_name || '电路详情' }}</h1>
@@ -9,7 +9,8 @@
       <el-button @click="goBack">返回</el-button>
     </section>
 
-    <el-card class="page-card" shadow="never">
+    <div class="detail-sections">
+    <el-card class="detail-section-card" shadow="never">
       <template #header>
         <div class="section-title">电路信息</div>
       </template>
@@ -66,7 +67,7 @@
       </div>
     </el-card>
 
-    <el-card class="page-card" shadow="never">
+    <el-card class="detail-section-card" shadow="never">
       <template #header>
         <div class="section-title">连接信息</div>
       </template>
@@ -102,7 +103,7 @@
       </div>
     </el-card>
 
-    <el-card class="page-card" shadow="never" v-if="topology">
+    <el-card class="detail-section-card" shadow="never" v-if="topology">
       <template #header>
         <div>
           <div class="section-title">拓扑图</div>
@@ -117,9 +118,10 @@
       />
     </el-card>
 
-    <el-card class="page-card" shadow="never" v-else>
+    <el-card class="detail-section-card" shadow="never" v-else>
       <el-empty description="当前电路未绑定拓扑" />
     </el-card>
+  </div>
   </div>
 </template>
 
@@ -215,33 +217,71 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.resource-detail {
+  gap: 28px;
+}
+
 .detail-hero {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 24px;
+  padding: 0 8px;
 }
 
 .detail-hero__label {
-  color: var(--cm-muted);
-  font-size: 13px;
-  font-weight: 800;
+  margin-bottom: 5px;
+  color: #71829a;
+  font-size: 14px;
 }
 
 .detail-hero__title {
-  margin: 6px 0 0;
-  color: var(--cm-text);
-  font-size: 28px;
-  font-weight: 800;
-  line-height: 1.25;
+  margin: 0;
+  color: #101b2d;
+  font-size: 32px;
+  font-weight: 750;
+  line-height: 45px;
+  overflow-wrap: anywhere;
 }
 
 .detail-hero__meta {
-  margin-top: 8px;
-  color: var(--cm-muted);
-  font-size: 13px;
-  font-weight: 700;
+  margin-top: 7px;
+  color: #71829a;
+  font-size: 14px;
+}
+
+.detail-hero :deep(.el-button) {
+  width: 88px;
+  height: 45px;
+  background: #fff;
+  font-size: 16px;
+}
+
+.detail-sections {
+  min-width: 0;
+  padding: 0 32px;
+  border: 1px solid #edf1f7;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.detail-section-card {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.detail-section-card + .detail-section-card {
+  border-top: 1px solid #e8edf5 !important;
+}
+
+.detail-section-card :deep(.el-card__header) {
+  border: 0;
+  padding: 28px 0 20px !important;
+}
+
+.detail-section-card :deep(.el-card__body) {
+  padding: 0 0 28px !important;
 }
 
 .info-grid,
@@ -249,26 +289,23 @@ onMounted(async () => {
 .connection-grid,
 .meta-grid {
   display: grid;
-  gap: 14px;
-}
-
-.info-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.address-grid,
-.connection-grid,
-.meta-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 14px;
+  gap: 0;
 }
 
 .info-item {
+  display: grid;
   min-width: 0;
-  padding: 16px;
-  border: 1px solid var(--cm-border);
-  border-radius: 8px;
-  background: var(--cm-surface-soft);
+  min-height: 54px;
+  grid-template-columns: 125px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #edf1f7;
+}
+
+.info-item:nth-child(even) {
+  border-left: 1px solid #edf1f7;
 }
 
 .info-item--clickable {
@@ -276,45 +313,48 @@ onMounted(async () => {
 }
 
 .info-item--clickable:hover {
-  background: var(--cm-primary-soft);
+  background: #f5f9ff;
 }
 
 .info-item__label {
-  display: block;
-  color: var(--cm-muted);
-  font-size: 13px;
-  font-weight: 700;
+  color: #71829a;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .info-item__value {
-  display: block;
-  overflow: hidden;
-  margin-top: 8px;
-  color: var(--cm-text);
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.info-item__value--wrap {
-  white-space: normal;
-  word-break: break-word;
+  min-width: 0;
+  color: #17243b;
+  font-size: 15px;
+  font-weight: 550;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 .remark-box {
-  margin-top: 14px;
-  padding: 16px;
-  border: 1px solid var(--cm-border);
-  border-radius: 8px;
-  background: var(--cm-surface-soft);
+  display: grid;
+  grid-template-columns: 125px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+  padding: 16px 20px 0;
 }
 
 .remark-box p {
-  margin: 8px 0 0;
-  color: var(--cm-text);
-  font-weight: 700;
-  line-height: 1.6;
+  margin: 0;
+  color: #17243b;
+  line-height: 1.8;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1100px) {
+  .detail-sections { padding: 0 24px; }
+  .info-item { grid-template-columns: 90px minmax(0, 1fr); padding: 12px; }
+  .remark-box { grid-template-columns: 90px minmax(0, 1fr); padding-left: 12px; }
+}
+
+@media (max-width: 850px) {
+  .info-grid, .address-grid, .connection-grid, .meta-grid { grid-template-columns: 1fr; }
+  .info-item:nth-child(even) { border-left: 0; }
 }
 </style>

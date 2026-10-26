@@ -2,8 +2,8 @@
   <div class="topology-detail" v-loading="loading">
     <section class="detail-bar">
       <div class="detail-bar__main">
-        <strong>{{ topology?.Customer?.name || `客户 #${topology?.customer_id || '-'}` }}</strong>
-        <span>{{ topology?.topology_name || '拓扑详情' }}</span>
+        <h1>{{ topology?.topology_name || '拓扑详情' }}</h1>
+        <span>{{ topology?.Customer?.name || `客户 #${topology?.customer_id || '-'}` }}</span>
       </div>
       <div class="detail-bar__stats">
         <span>设备 {{ devices.length }}</span>
@@ -587,7 +587,7 @@ onMounted(async () => {
 .topology-detail {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .detail-bar,
@@ -595,9 +595,9 @@ onMounted(async () => {
 .manage-panel {
   overflow: hidden;
   border: 1px solid rgba(226, 232, 240, 0.78);
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--cm-surface);
-  box-shadow: 0 12px 30px rgba(25, 43, 78, 0.055);
+  box-shadow: none;
 }
 
 .detail-bar {
@@ -605,21 +605,28 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 12px 16px;
+  padding: 0 8px 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  flex-wrap: wrap;
 }
 
 .detail-bar__main {
   display: flex;
   min-width: 220px;
-  align-items: baseline;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
 }
 
-.detail-bar__main strong {
+.detail-bar__main h1 {
+  margin: 0;
   overflow: hidden;
   color: var(--cm-text);
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 30px;
+  line-height: 42px;
+  font-weight: 750;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -643,7 +650,7 @@ onMounted(async () => {
 
 .detail-bar__stats span {
   border-radius: 999px;
-  background: #f4f7fb;
+  background: #eaf2ff;
   color: #516176;
   font-size: 12px;
   font-weight: 800;
@@ -660,7 +667,7 @@ onMounted(async () => {
 }
 
 .detail-bar__actions :deep(.el-button) {
-  height: 32px;
+  height: 42px;
 }
 
 .canvas-panel {
@@ -669,11 +676,11 @@ onMounted(async () => {
 
 .panel-head {
   display: flex;
-  min-height: 52px;
+  min-height: 78px;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 10px 16px;
+  padding: 22px 28px;
 }
 
 .canvas-panel :deep(.topology-canvas-wrap) {

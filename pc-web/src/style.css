@@ -1,17 +1,17 @@
 :root {
-  --cm-bg: #f5f7fb;
+  --cm-bg: #f4f7fc;
   --cm-shell: #e9edf5;
   --cm-surface: #ffffff;
   --cm-surface-soft: #f8fbff;
   --cm-text: #162033;
   --cm-muted: #7a8496;
   --cm-border: #e3e8f2;
-  --cm-primary: #2563eb;
+  --cm-primary: #1677ff;
   --cm-primary-strong: #1e3a8a;
   --cm-primary-soft: #eaf2ff;
   --cm-warning: #f59e0b;
   --cm-danger: #dc2626;
-  --cm-shadow: 0 14px 34px rgba(25, 43, 78, 0.07);
+  --cm-shadow: 0 4px 16px rgba(25, 43, 78, 0.025);
 
   color: var(--cm-text);
   font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
@@ -261,4 +261,123 @@ select {
 .el-tag {
   border-radius: 999px;
   font-weight: 700;
+}
+
+/* Shared management pages and section headers. */
+.management-page {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.management-heading h1 {
+  margin: 0;
+  color: #101b2d;
+  font-size: 30px;
+  font-weight: 750;
+  line-height: 42px;
+}
+
+.management-heading p {
+  margin: 5px 0 0;
+  color: #7b8ba4;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.management-page .table-shell,
+.management-page .backup-panel,
+.management-page .side-card {
+  border-color: #e7edf6;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+}
+
+.management-page .table-shell__toolbar {
+  min-height: 78px;
+  padding: 20px 24px;
+  border-bottom: 0;
+}
+
+.management-page .table-shell__footer,
+.management-page .backup-footer {
+  min-height: 70px;
+  padding: 16px 24px;
+}
+
+.management-page .el-table .el-table__cell,
+.topology-detail .manage-panel .el-table .el-table__cell {
+  height: 53px;
+  font-size: 14px;
+}
+
+.management-page .el-table th.el-table__cell,
+.topology-detail .manage-panel .el-table th.el-table__cell {
+  color: #5a6a82;
+  font-weight: 600;
+}
+
+.management-page .el-table .cell {
+  padding-right: 18px;
+  padding-left: 18px;
+}
+
+.management-page .el-input__wrapper,
+.management-page .el-select__wrapper {
+  min-height: 38px;
+  background: #fff !important;
+}
+
+.management-page .section-title,
+.management-page .side-card__title,
+.resource-detail .section-title,
+.topology-detail .section-title {
+  position: relative;
+  padding-left: 20px;
+  color: #142033;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 27px;
+}
+
+.management-page .section-title::before,
+.management-page .side-card__title::before,
+.resource-detail .section-title::before,
+.topology-detail .section-title::before {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  width: 5px;
+  border-radius: 3px;
+  background: #1677ff;
+  content: '';
+}
+
+.management-page .side-card--danger .side-card__title::before {
+  background: var(--cm-danger);
+}
+
+.management-page .section-meta,
+.resource-detail .section-meta,
+.topology-detail .section-meta {
+  margin-top: 6px;
+  padding-left: 20px;
+  color: #7b8ba4;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.management-page .table-shell__filters {
+  flex: 1;
+}
+
+@media (max-width: 1150px) {
+  .management-page .table-shell__toolbar,
+  .management-page .table-shell__footer,
+  .management-page .backup-footer {
+    flex-wrap: wrap;
+  }
 }

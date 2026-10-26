@@ -15,7 +15,7 @@
             <dt><el-icon><CopyDocument /></el-icon><span>当前版本</span></dt>
             <dd><strong class="version-number">v{{ appVersion }}</strong></dd>
             <el-button class="update-button" type="primary" plain :loading="checkingUpdate" @click="checkUpdate">
-              <el-icon v-if="!checkingUpdate"><Refresh /></el-icon>检查更新
+              <el-icon v-if="!checkingUpdate"><Refresh /></el-icon>{{ updating ? '正在更新' : '检查更新' }}
             </el-button>
           </div>
           <div class="information-row">
@@ -31,6 +31,7 @@
             <dd>{{ versionInfo.releasedAt || '-' }}</dd>
           </div>
         </dl>
+        <p v-if="updateMessage" class="update-progress" role="status">{{ updateMessage }}</p>
       </section>
       <img class="about-illustration" src="../assets/about-platform.svg" alt="蓝色台账图标与分层数据平台插画" />
     </div>
@@ -39,7 +40,7 @@
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { Collection, CopyDocument, User, Message, Clock, Refresh } from '@element-plus/icons-vue';
 import versionInfo from '../../../version.json';
 
@@ -60,8 +61,72 @@ interface UpdatePayload {
   output: string;
 }
 
+interface UpdateJob {
+  id?: string;
+  status: 'idle' | 'running' | 'succeeded' | 'failed';
+  message?: string;
+  version?: string;
+}
+
 const appVersion = versionInfo.version;
 const checkingUpdate = ref(false);
+const updating = ref(false);
+const updateMessage = ref('');
+let disposed = false;
+onUnmounted(() => { disposed = true; });
+
+onMounted(async () => {
+  try {
+    const job = await readUpdateStatus();
+    if (job.status === 'failed' && !disposed) updateMessage.value = job.message || '上次更新失败';
+    if (job.status === 'running' && !disposed) {
+      checkingUpdate.value = true;
+      await watchUpdate(job);
+    }
+  } catch {
+    // 检查更新时会显示连接错误，页面加载时不打断用户。
+  } finally {
+    if (!disposed) checkingUpdate.value = false;
+  }
+});
+
+async function readUpdateStatus(): Promise<UpdateJob> {
+  const response = await fetch('/api/version/update/status', { cache: 'no-store', signal: AbortSignal.timeout(10000) });
+  if (!response.ok) throw new Error('暂时无法查询更新进度');
+  const payload = await response.json();
+  return payload.data;
+}
+
+async function watchUpdate(initial: UpdateJob) {
+  updating.value = true;
+  let job = initial;
+  const deadline = Date.now() + 30 * 60 * 1000;
+  try {
+    while (!disposed) {
+      updateMessage.value = job.message || '正在更新…';
+      if (job.status === 'failed') throw new Error(job.message || '更新失败');
+      if (job.status === 'succeeded') {
+        await ElMessageBox.alert(`${job.message}，点击确定刷新页面。`, '更新完成', { confirmButtonText: '确定' });
+        window.location.reload();
+        return;
+      }
+      if (Date.now() > deadline) throw new Error('等待更新超时，请稍后重新进入关于页查看进度。');
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (disposed) return;
+      let latest: UpdateJob;
+      try {
+        latest = await readUpdateStatus();
+      } catch {
+        updateMessage.value = '正在等待服务重新连接，更新任务会继续执行…';
+        continue;
+      }
+      if (latest.id !== initial.id) throw new Error('更新任务状态已改变，请重新检查更新。');
+      job = latest;
+    }
+  } finally {
+    updating.value = false;
+  }
+}
 
 async function checkUpdate() {
   checkingUpdate.value = true;
@@ -94,6 +159,11 @@ async function checkUpdate() {
       throw new Error(updatePayload?.error?.message || '更新失败');
     }
 
+    if (updatePayload.data.status === 'running') {
+      await watchUpdate(updatePayload.data as UpdateJob);
+      return;
+    }
+
     const updateResult = updatePayload.data as UpdatePayload;
     await ElMessageBox.alert(formatUpdateResult(updateResult), '更新完成', {
       confirmButtonText: '知道了',
@@ -120,6 +190,13 @@ function formatUpdateResult(result: UpdatePayload) {
 </script>
 
 <style scoped>
+.update-progress {
+  color: #526780;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+
 .about-page {
   position: relative;
   display: grid;

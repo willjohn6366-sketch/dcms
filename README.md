@@ -59,6 +59,21 @@ docker compose up -d --build
 SQLite 数据库和备份文件会保存在宿主机 `backend/data/` 下。该目录已加入 `.gitignore`，避免真实业务数据上传到代码仓库。
 重建 Docker 镜像或重建容器不会删除该宿主机目录里的数据。
 
+### 更新 Docker 部署
+
+首次启用网页更新，需要在宿主机的项目根目录执行一次：
+
+```bash
+git pull --ff-only
+DCMS_PROJECT_DIR="$(pwd)" docker compose up -d --build
+```
+
+之后在关于页点击“检查更新 → 立即更新”即可。页面会显示拉取代码、构建镜像、重建容器的进度，服务短暂断开时会自动等待重连，完成后提示刷新。任务失败时会显示原因；重新打开关于页也能继续查看正在运行的任务。
+
+独立的 `updater` 服务只在 Compose 内部提供接口，不映射宿主机端口。它挂载宿主机项目目录及 Docker socket，执行固定的更新流程；普通后端不挂载 Docker socket。该能力等同于服务器管理权限，请仅在受信任的内网使用本系统，不要把应用或更新服务直接暴露到公网。
+
+项目必须是完整的 Git 仓库且没有未提交改动，默认使用现有分支的上游更新。私有仓库需在更新容器中另行配置只读拉取凭据。`DCMS_PROJECT_DIR` 必须与宿主机项目绝对路径一致；在 NAS 图形界面创建 Compose 项目时，请显式设置此变量，例如 `/home/admin/docker/dcms`。应用更新会重建后端和两个前端，更新服务自身不会被本次任务重建。数据库与备份仍保存在原有 `backend/data/` 挂载目录。
+
 ## 数据与备份
 
 - 默认数据库文件：`backend/data/database/circuit_management.sqlite`

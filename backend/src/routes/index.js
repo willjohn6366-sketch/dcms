@@ -56,12 +56,40 @@ router.get('/version/latest', async (req, res, next) => {
 
 router.post('/version/update', async (req, res, next) => {
   try {
-    const result = await pullLatestCode();
-    res.json(success(result, '代码更新完成'));
+    const result = process.env.UPDATER_URL
+      ? await requestUpdater('/update', 'POST')
+      : await pullLatestCode();
+    res.json(success(result, process.env.UPDATER_URL ? '更新任务已启动' : '代码更新完成'));
   } catch (error) {
     next(error);
   }
 });
+
+router.get('/version/update/status', async (req, res, next) => {
+  try {
+    res.set('Cache-Control', 'no-store');
+    const result = process.env.UPDATER_URL ? await requestUpdater('/status') : { status: 'idle' };
+    res.json(success(result, '操作成功'));
+  } catch (error) {
+    next(error);
+  }
+});
+
+async function requestUpdater(endpoint, method = 'GET') {
+  try {
+    const response = await fetch(`${process.env.UPDATER_URL}${endpoint}`, {
+      method,
+      signal: AbortSignal.timeout(10000)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (cause) {
+    const error = new Error('无法连接更新服务，请确认 updater 容器已启动。');
+    error.statusCode = 503;
+    error.code = 'UPDATER_UNAVAILABLE';
+    throw error;
+  }
+}
 
 async function readVersionFile() {
   const candidates = [
@@ -162,7 +190,9 @@ async function runGit(args, cwd, fallbackMessage) {
     });
   } catch (error) {
     const detail = [error.stderr, error.stdout, error.message].filter(Boolean).join('\n').trim();
-    const nextError = new Error(detail || fallbackMessage);
+    const nextError = new Error(error.code === 'ENOENT'
+      ? '无法启动 Git，请确认后端运行环境已安装 Git、PATH 可找到 git，且项目目录存在。Docker 部署请在服务器项目目录拉取代码并重建容器。'
+      : detail || fallbackMessage);
     nextError.statusCode = error.code === 'ENOENT' ? 500 : 409;
     nextError.code = error.code === 'ENOENT' ? 'GIT_NOT_AVAILABLE' : 'GIT_UPDATE_FAILED';
     throw nextError;

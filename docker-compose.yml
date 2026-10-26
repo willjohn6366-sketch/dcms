@@ -12,10 +12,17 @@ services:
       DB_DIALECT: sqlite
       DB_STORAGE: /app/data/database/circuit_management.sqlite
       BACKUP_DIR: /app/data/backups
+      UPDATER_URL: http://updater:6110
     volumes:
       - ./backend/data:/app/data
     ports:
       - "6100:6100"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:6100/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
 
   pc-web:
     build:
@@ -27,6 +34,11 @@ services:
       - backend
     ports:
       - "6102:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
 
   mobile-h5:
     build:
@@ -38,3 +50,21 @@ services:
       - backend
     ports:
       - "6101:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  updater:
+    build:
+      context: .
+      dockerfile: updater/Dockerfile
+    container_name: circuit-management-updater
+    restart: unless-stopped
+    environment:
+      PROJECT_DIR: ${DCMS_PROJECT_DIR:-${PWD}}
+      COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+    volumes:
+      - ${DCMS_PROJECT_DIR:-${PWD}}:${DCMS_PROJECT_DIR:-${PWD}}
+      - /var/run/docker.sock:/var/run/docker.sock
